@@ -19,18 +19,22 @@
     <link rel="stylesheet" href="bootstrap.min.css">
 </head>
 
-<body>
+<body id="indexBdy">
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light" id="headerBg">
         <div class="container">
             <div class="d-flex justify-content-around w-100">
-                <div><h2 class="navbar-brand">Audiobook Master</h2></div>
-                <div></div><button class="text-end btn btn-sm btn-primary ml-auto" data-toggle="modal" data-target="#addAudiobookModal">Add
-                    Audiobook</button></div>
+                <div>
+                    <h2 class="navbar-brand">Audiobook Master</h2>
+                </div>
+                <div></div><button class="text-end btn btn-sm btn-light text-dark ml-auto" data-toggle="modal"
+                    data-target="#addAudiobookModal">Add
+                    Audiobook</button>
             </div>
-            
         </div>
-        
+
+        </div>
+
     </nav>
 
     <div class="container mt-3">
@@ -41,8 +45,8 @@
 
     <div class="modal fade" id="addAudiobookModal" tabindex="-1" role="dialog" aria-labelledby="addAudiobookModalLabel"
         aria-hidden="true">
-        <div class=" modal-dialog modal-dialog-centered " role="document">
-            <div class="modal-content">
+        <div class=" modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-primary">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addAudiobookModalLabel">Add New Audiobook</h5>
                     <button type="button" class="btn-close btn-danger close" data-dismiss="modal" aria-label="Close">
@@ -53,18 +57,18 @@
                     <form id="addAudiobookForm">
                         <div class="form-group">
                             <label for="title">Title</label>
-                            <input type="text" class="form-control" id="title" name="title" required>
+                            <input type="text" class="form-control form-control-sm" id="title" name="title" required>
                         </div>
                         <div class="form-group">
                             <label for="author">Author</label>
-                            <input type="text" class="form-control" id="author" name="author" required>
+                            <input type="text" class="form-control form-control-sm" id="author" name="author" required>
                         </div>
                         <div class="form-group">
                             <label for="audioUrl">Book Content</label>
-                            <textarea type="text" class="form-control" id="audioUrl" name="audioUrl"
+                            <textarea type="text" class="form-control form-control-sm" id="audioUrl" name="audioUrl"
                                 required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Add Audiobook</button>
+                        <button type="submit" class="btn btn-light text-dark">Submit</button>
                     </form>
                 </div>
             </div>
@@ -89,14 +93,15 @@
 
                         card.innerHTML = `
                                         <div class="card">
-                                            <img src="/assets/book.jpeg" class="card-img-top" alt="${audiobook.title}">
+                                            <img src="/assets/book.jpeg
+                                            " class="card-img-top" alt="${audiobook.title}">
                                             <div class="card-body">
                                                 <h5 class="card-title">${audiobook.title}</h5>
-                                                <p class="card-text">${audiobook.author}</p>
+                                                <p class="card-text text-end">- ${audiobook.author}</p>
                                                 <div class="d-flex align-items-center justify-content-center">
-                                                <button class="btn btn-success btn-sm mt-2 mx-2" onclick="readAudiobookTitle('${sanitizedContent}', ${audiobook.id})">Read Book</button>
-                                                <button class="btn btn-danger btn-sm mt-2 mx-2" onclick="deleteAudiobook(${audiobook.id})">Delete</button>
-                                                <button class="btn btn-info btn-sm mt-2"> <i class="bi bi-info-circle text-white" style="cursor: pointer;" onclick="showAudioUrlPopup('${sanitizedContent}')"></i></button>
+                                                <button class="btn btn-success btn-sm mt-2 mx-2" onclick="readAudiobookTitle('${sanitizedContent}', ${audiobook.id})"><i class="bi bi-megaphone"></i></button>
+                                                <button class="btn btn-danger btn-sm mt-2 mx-2" onclick="deleteAudiobook(${audiobook.id})"><i class="bi bi-trash3-fill"></i></button>
+                                                <button class="btn btn-info btn-sm mt-2"> <i class="bi bi-info-circle text-white" style="cursor: pointer;" onclick="showAudioUrlPopup('${sanitizedContent}')"></i> </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -114,11 +119,11 @@
             const modal = document.createElement('div');
             modal.className = 'modal fade';
             modal.innerHTML = `
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Book Content</h5>
-                        <button type="button" class="btn-close btn-danger" data-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content bg-info">
+                    <div class="modal-header bg-white">
+                        <p class="modal-title text-dark">Book Content</p>
+                        <button type="button" class="btn btn-close btn-danger" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p>${audioUrl}</p>
@@ -203,6 +208,9 @@
                     }
 
                     fetchAndDisplayAudiobooks();
+                    document.getElementById("title").value=""
+                    document.getElementById("author").value=""
+                    document.getElementById("audioUrl").value=""
                 })
                 .catch(error => console.error('Error adding new audiobook:', error));
         });
