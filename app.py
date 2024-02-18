@@ -15,7 +15,7 @@ CORS(app)
 # Dummy data for illustration (Replace with your database)
 audiobooks = [
     {"id": 1, "title": "Sample book 1", "author": "Author 1", "audio_content": "In a world of magic and mystery, young sorcerer Alaric must unravel ancient secrets to save his realm from impending doom in 'Chronicles of Arcane Realms'"},
-    {"id": 3, "title": "Sample book 2", "author": "Author 2", "audio_content": "A gripping psychological thriller, 'Whispers in the Shadows' follows detective Emma Harper as she delves into a series of cryptic messages leading to a dark conspiracy that threatens to shatter her reality."},
+    {"id": 2, "title": "Sample book 2", "author": "Author 2", "audio_content": "A gripping psychological thriller, 'Whispers in the Shadows' follows detective Emma Harper as she delves into a series of cryptic messages leading to a dark conspiracy that threatens to shatter her reality."},
 ]
 
 @app.route('/api/audiobooks')
