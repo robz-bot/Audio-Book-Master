@@ -1,26 +1,35 @@
-# @author Robin Rajesh
-# @email robinsiva1998@gmail.com
-# @create date 2024-01-24 16:14:58
-# @modify date 2024-01-24 16:14:58
-# @desc Review and Rating Aggregator Backend code
-
-
-from flask import Flask, render_template, jsonify, request
-
+from flask import Flask, jsonify, request
+from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS  
 
 app = Flask(__name__)
 CORS(app)  
 
-# Dummy data for illustration (Replace with your database)
-audiobooks = [
-    {"id": 1, "title": "Sample book 1", "author": "Author 1", "audio_content": "In a world of magic and mystery, young sorcerer Alaric must unravel ancient secrets to save his realm from impending doom in 'Chronicles of Arcane Realms'"},
-    {"id": 2, "title": "Sample book 2", "author": "Author 2", "audio_content": "A gripping psychological thriller, 'Whispers in the Shadows' follows detective Emma Harper as she delves into a series of cryptic messages leading to a dark conspiracy that threatens to shatter her reality."},
-]
+# Configure MySQL connection
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/book'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# Define Audiobook model
+class Audiobook(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    author = db.Column(db.String(100), nullable=False)
+    audio_content = db.Column(db.String(255), nullable=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "author": self.author,
+            "audio_content": self.audio_content
+        }
 
 @app.route('/api/audiobooks')
 def get_audiobooks():
-    return jsonify(audiobooks)
+    audiobooks = Audiobook.query.all()
+    return jsonify([audiobook.to_dict() for audiobook in audiobooks])
 
 @app.route('/api/add_audiobook', methods=['POST'])
 def add_audiobook():
@@ -31,14 +40,12 @@ def add_audiobook():
         if 'title' not in data or 'author' not in data or 'audioUrl' not in data:
             return jsonify({"error": "Missing required fields"}), 400
 
-        # Add the new audiobook to the data (replace with database insertion)
-        new_audiobook = {
-            "id": len(audiobooks) + 1,
-            "title": data['title'],
-            "author": data['author'],
-            "audio_content": data['audioUrl'],
-        }
-        audiobooks.append(new_audiobook)
+        # Create a new audiobook instance
+        new_audiobook = Audiobook(title=data['title'], author=data['author'], audio_content=data['audioUrl'])
+
+        # Add the new audiobook to the database
+        db.session.add(new_audiobook)
+        db.session.commit()
 
         return jsonify({"message": "Audiobook added successfully"}), 201
 
@@ -48,10 +55,13 @@ def add_audiobook():
 @app.route('/api/delete_audiobook/<int:audiobook_id>', methods=['DELETE'])
 def delete_audiobook(audiobook_id):
     try:
-        global audiobooks
-        audiobooks = [audiobook for audiobook in audiobooks if audiobook['id'] != audiobook_id]
-
-        return jsonify({"message": "Audiobook deleted successfully"}), 200
+        audiobook = Audiobook.query.get(audiobook_id)
+        if audiobook:
+            db.session.delete(audiobook)
+            db.session.commit()
+            return jsonify({"message": "Audiobook deleted successfully"}), 200
+        else:
+            return jsonify({"error": "Audiobook not found"}), 404
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
